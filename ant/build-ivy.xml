@@ -1,0 +1,55 @@
+<project name="build-ivy" default="ivy-retrieve" xmlns:ivy="antlib:org.apache.ivy.ant">
+
+	<property name="ivy.lib.dir" value="lib"/>
+	<property name="build.dir" value="${basedir}"/>
+	<property name="settings.dir" location="${basedir}/../continuous-integration-script/ivy"/>
+ 
+	<import file="build-ivy-common.xml" as="ivy-common"/>
+
+	<target name="ivy-echo-parameter">
+		<echo message="basedir:${basedir}" />
+		<echo message="settings.dir:${settings.dir}" />
+		<echo message="build.dir:${build.dir}" />
+		<echo message="publish.revision:${publish.revision}" />
+	</target>
+ 
+	<target name="ivy-init" depends="ivy-echo-parameter">
+		<ivy:settings file="${settings.dir}/ivysettings.xml" refid="ivy.classpath">
+ 			<credentials host="console.facteo.courrier.intra.laposte.fr" realm="Sonatype Nexus Repository Manager" username="admin" passwd="admin123"/> 
+		</ivy:settings>             
+	</target>
+
+	<target name="ivy-resolve" depends="ivy-init,ivy-common.resolve">
+	</target>
+ 
+	<target name="ivy-retrieve" depends="ivy-resolve">
+		<ivy:retrieve pattern="${ivy.lib.dir}/[type]s/[artifact]-[revision](-[classifier]).[ext]" sync="true" />
+	</target>
+
+	<target name="ivy-makepom-snapshot">
+  	    <antcall target="ivy-common.makepom">
+		    <param name="publish.revision" value="1.0-SNAPSHOT"/>
+		</antcall>
+	</target>
+
+	<target name="ivy-publish-snapshot" depends="ivy-resolve">
+		<antcall target="ivy-common.publish">
+		    <param name="publish.resolver" value="nexus-snapshots"/>
+		    <param name="publish.revision" value="1.0-SNAPSHOT"/>
+		</antcall>
+	</target>
+
+	<target name="ivy-publish-release" depends="ivy-resolve">
+		<antcall target="ivy-common.publish">
+		    <param name="publish.resolver" value="nexus-releases"/>
+		    <param name="publish.revision" value="1.0"/>
+		</antcall>
+	</target>
+
+	<target name="ivy-publish-public" depends="ivy-resolve">
+		<antcall target="ivy-common.publish">
+		    <param name="publish.resolver" value="nexus"/>
+		    <param name="publish.revision" value="1.0"/>
+		</antcall>
+	</target>
+</project>

@@ -1,0 +1,21 @@
+<project xmlns:ivy="antlib:org.apache.ivy.ant">
+ 
+	<target name="resolve">
+		<ivy:resolve file="${basedir}/ivy.xml" />
+	</target>
+
+	<target name="makepom">
+ 		<ivy:makepom ivyfile="${build.dir}/ivy-${publish.revision}.xml" pomfile="${build.dir}/pom.xml" templatefile="${basedir}/../Script/ivy/pom-template.xml"/>
+	</target>
+
+	<target name="publish">
+	    <ivy:deliver deliverpattern="${build.dir}/ivy-${publish.revision}.xml" pubrevision="${publish.revision}" status="release"/>
+
+ 		<antcall target="resolve"/>
+
+		<ivy:publish resolver="${publish.resolver}" revision="${publish.revision}" overwrite="true" publishivy="false" >
+			<artifacts pattern="target/[artifact]-[revision].[ext]"/>
+		</ivy:publish>
+	</target>
+
+</project>
