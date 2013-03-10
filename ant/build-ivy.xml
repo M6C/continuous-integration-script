@@ -15,7 +15,7 @@
  
 	<target name="ivy-init" depends="ivy-echo-parameter">
 		<ivy:settings file="${settings.dir}/ivysettings.xml" refid="ivy.classpath">
- 			<credentials host="console.facteo.courrier.intra.laposte.fr" realm="Sonatype Nexus Repository Manager" username="admin" passwd="admin123"/> 
+ 			<credentials host="localhost:8081" realm="Sonatype Nexus Repository Manager" username="admin" passwd="admin123"/> 
 		</ivy:settings>             
 	</target>
 
